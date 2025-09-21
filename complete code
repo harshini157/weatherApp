@@ -1,0 +1,54 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+import org.json.JSONObject;
+
+public class WeatherAppAPI {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter city name: ");
+        String city = sc.nextLine();
+
+        // Your API key from OpenWeatherMap
+        String apiKey ="e06141f30d14fc4ddd459c18a499b6a7";  
+        String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" 
+                            + city + "&appid=" + apiKey + "&units=metric";
+
+        try {
+            // Create URL and open connection
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            // Read response
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            // Parse JSON
+            JSONObject json = new JSONObject(response.toString());
+
+            String cityName = json.getString("name");
+            JSONObject main = json.getJSONObject("main");
+            double temperature = main.getDouble("temp");
+            String condition = json.getJSONArray("weather").getJSONObject(0).getString("description");
+
+            // Display output
+            System.out.println("\n--- Weather Report ---");
+            System.out.println("City: " + cityName);
+            System.out.println("Condition: " + condition);
+            System.out.println("Temperature: " + temperature + "°C");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        sc.close();
+    }
+}

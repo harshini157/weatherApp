@@ -1,1 +1,1 @@
-java -cp ".;lib/json-20210307.jar" WeatherAppAPI
+java "-cp" ".;json-20230227.jar" WeatherAppAPI
